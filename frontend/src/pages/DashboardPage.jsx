@@ -1,17 +1,15 @@
-import { useAuthStore } from "@/store/authStore"
-const DashboardPage = () => {
-  const { user, isCheckingAuth } = useAuthStore();
- console.log(user)
-  if(isCheckingAuth) {
-    return <div>Loading...</div>
-  }
+import React from 'react'
+import Navbar from '../components/Navbar'
+import HeroSection from '../components/HeroSection'
+import Home1 from './Home'
+
+const Home = () => {
   return (
-    <div>
-      <h1>Dashboard Page</h1>
-      <p>Welcome {user.name}!</p>
-      <p>Your email is {user.email}!</p>
-    </div>
+    <>
+    <Home1 />
+    </>
+ 
   )
 }
 
-export default DashboardPage
+export default Home

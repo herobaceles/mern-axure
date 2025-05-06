@@ -21,15 +21,21 @@ export const useAuthStore = create((set) => ({
         credentials: "include",
         body: JSON.stringify({ email, password, name }),
       });
+  
       const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Signup failed");
+      }
+  
       set({ isLoading: false, isAuthenticated: true, user: data.user });
     } catch (error) {
       set({ isLoading: false, error: error.message });
-      console.log(error);
-
+      console.error("Signup error:", error);
       throw error;
     }
   },
+  
   verifyEmail: async (code) => {
     set({ isLoading: true, error: null });
     try {
@@ -41,13 +47,21 @@ export const useAuthStore = create((set) => ({
         credentials: "include",
         body: JSON.stringify({ code }),
       });
+  
       const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Email verification failed");
+      }
+  
       set({ isLoading: false, isAuthenticated: true, user: data.user });
     } catch (error) {
       set({ isLoading: false, error: error.message });
-      console.log(error);
+      console.error("Verify email error:", error);
+      throw error;
     }
   },
+  
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
@@ -59,7 +73,13 @@ export const useAuthStore = create((set) => ({
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
+  
       const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+  
       set({ isLoading: false, isAuthenticated: true, user: data.user });
     } catch (error) {
       set({ isLoading: false, error: error.message });
@@ -67,6 +87,7 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
+  
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
@@ -105,7 +126,7 @@ export const useAuthStore = create((set) => ({
     }
   },
   forgotPassword: async (email) => {
-    set({ isLoading: true, error: null});
+    set({ isLoading: true, error: null });
     try {
       const response = await fetch(`${API_URL}/forgot-password`, {
         method: "POST",
@@ -115,14 +136,21 @@ export const useAuthStore = create((set) => ({
         credentials: "include",
         body: JSON.stringify({ email }),
       });
-     const data = await response.json();
-     console.log(data.message);
-     set({ isLoading: false, message: data.message });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Forgot password failed");
+      }
+  
+      set({ isLoading: false, message: data.message });
     } catch (error) {
       set({ isLoading: false, error: error.message });
-      console.log(error);
+      console.error("Forgot password error:", error);
+      throw error;
     }
   },
+  
   resetPassword: async (token, password) => {
     set({ isLoading: true, error: null });
     try {
@@ -134,12 +162,19 @@ export const useAuthStore = create((set) => ({
         credentials: "include",
         body: JSON.stringify({ password }),
       });
+  
       const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Reset password failed");
+      }
+  
       set({ isLoading: false, message: data.message });
     } catch (error) {
       set({ isLoading: false, error: error.message });
-      console.log(error);
+      console.error("Reset password error:", error);
       throw error;
     }
-  }
+  },
+  
 }));

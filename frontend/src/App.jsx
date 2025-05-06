@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import VerificationEmailPage from "./pages/VerificationEmailPage";
+import { ToastContainer } from "react-toastify";
+import { VerificationEmailPage } from "./pages/VerificationEmailPage";
 import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
 import DashboardPage from "./pages/DashboardPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
 import Home from "./pages/Home";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const ProtectRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated && !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -20,6 +21,7 @@ const ProtectRoute = ({ children }) => {
 
 const AuthenticatedUserRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
+  
   if (isAuthenticated && user) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -27,14 +29,18 @@ const AuthenticatedUserRoute = ({ children }) => {
   return children;
 };
 
+
 function App() {
   const { isCheckingAuth, checkAuth, logout, user } = useAuthStore();
 
+  // useEffect(() => {
+  //   checkAuth();
+  // }, [checkAuth]);
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  console.log(user);
+    const init = async () => await checkAuth();
+    init();
+  }, []);
+  // console.log(user)
 
   if (isCheckingAuth) {
     return <div>Loading...</div>;
@@ -45,10 +51,10 @@ function App() {
   };
 
   return (
-    <div>
-      {user && <button onClick={handleLogout}>Logout</button>} {/* Directly using a button */}
+    <div className="container mt-4">
+       
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={ <Home />} />
         <Route
           path="/signup"
           element={
@@ -84,7 +90,9 @@ function App() {
           }
         />
       </Routes>
-      {/* No Toaster component anymore */}
+
+      {/* React Toastify Container */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }

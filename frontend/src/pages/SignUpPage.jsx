@@ -5,6 +5,7 @@ import { useAuthStore } from "../store/authStore"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 
 function SignUpPage() {
@@ -74,7 +75,8 @@ function SignUpPage() {
                 Already have an account?{" "}
                 <a href="#" className="text-primary">
                   Log In
-                </a>
+                </a><Link to="/login" className="text-primary">Log In</Link>
+
               </p>
               <p>
                 <a href="/">Back</a>

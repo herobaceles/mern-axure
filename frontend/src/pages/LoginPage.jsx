@@ -1,154 +1,99 @@
-"use client"
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Lock } from 'lucide-react';
+import { useAuthStore } from "@/store/authStore";
+import { useNavigate } from 'react-router-dom';
+import trialImg from '../assets/trial3.jpg';
 
-import { useState } from "react"
-import "bootstrap/dist/css/bootstrap.min.css"
-import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap"
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login, isLoading, error } = useAuthStore();
+  const navigate = useNavigate();
 
-function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  })
-
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [loginError, setLoginError] = useState("")
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      })
-    }
-
-    // Clear login error when user makes changes
-    if (loginError) {
-      setLoginError("")
-    }
-  }
-
-  const validateForm = () => {
-    const newErrors = {}
-
-    // Validate email
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
-    }
-
-    // Validate password
-    if (!formData.password) {
-      newErrors.password = "Password is required"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    if (validateForm()) {
-      setIsSubmitting(true)
-
-      // Simulate API call
-      setTimeout(() => {
-        console.log("Login attempt:", formData)
-
-        // Simulate login logic - in a real app, this would be your API call
-        if (formData.email === "test@example.com" && formData.password === "password123") {
-          // Successful login
-          console.log("Login successful")
-          // Here you would typically:
-          // 1. Store auth token in localStorage/sessionStorage
-          // 2. Update global auth state
-          // 3. Redirect to dashboard/home page
-        } else {
-          // Failed login
-          setLoginError("Invalid email or password. Please try again.")
-        }
-
-        setIsSubmitting(false)
-      }, 1000)
-    }
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const success = await login(email, password);
+    if (success) navigate("/dashboard");
+  };
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
-        <Col md={8} lg={5}>
-          <Card className="shadow">
-            <Card.Header className="bg-primary text-white text-center py-3">
-              <h2>Log In</h2>
-            </Card.Header>
-            <Card.Body className="p-4">
-              {loginError && <Alert variant="danger">{loginError}</Alert>}
+    <div className="d-flex align-items-center justify-content-center" style={{ height: '100vh' }}>
+      <div
+        className="row shadow overflow-hidden bg-white rounded"
+        style={{ height: '70vh', width: '70vw' }}
+      >
 
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Email Address</Form.Label>
-                  <Form.Control
+        {/* Left Image Panel */}
+        <div className="col-md-6 d-none d-md-flex p-0">
+          <img
+            src={trialImg}
+            alt="Login Illustration"
+            className="img-fluid w-100 h-100"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+
+        {/* Right Form Panel */}
+        <div className="col-md-6 d-flex align-items-center justify-content-center">
+          <div className="p-5 w-100" style={{ maxWidth: '400px' }}>
+            <h2 className="fw-bold mb-3 text-dark text-center">Welcome Back</h2>
+            <p className="text-muted text-center mb-4">Please enter your login details</p>
+
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    <Mail size={18} className="text-muted" />
+                  </span>
+                  <input
                     type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    isInvalid={!!errors.email}
+                    id="email"
+                    className="form-control"
                     placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
-                  <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    isInvalid={!!errors.password}
-                    placeholder="Enter your password"
-                  />
-                  <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Check type="checkbox" label="Remember me" id="remember-me" />
-                </Form.Group>
-
-                <Button variant="primary" type="submit" className="w-100 py-2 mb-3" disabled={isSubmitting}>
-                  {isSubmitting ? "Logging In..." : "Log In"}
-                </Button>
-
-                <div className="text-center">
-                  <a href="#" className="text-primary d-block mb-3">
-                    Forgot Password?
-                  </a>
                 </div>
-              </Form>
-            </Card.Body>
-            <Card.Footer className="text-center py-3 bg-light">
-              <p className="mb-0">
-                Don't have an account?{" "}
-                <a href="#" className="text-primary">
-                  Sign Up
-                </a>
-              </p>
-              <p><a href="/">back</a></p>
-            </Card.Footer>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
-  )
-}
+              </div>
 
-export default LoginPage
+              <div className="mb-4">
+                <label htmlFor="password" className="form-label">Password</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    <Lock size={18} className="text-muted" />
+                  </span>
+                  <input
+                    type="password"
+                    id="password"
+                    className="form-control"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100 py-2"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Logging in...' : 'Login'}
+                </button>
+              </motion.div>
+
+              {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
+              
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
