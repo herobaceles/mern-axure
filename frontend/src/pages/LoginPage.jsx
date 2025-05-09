@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock } from 'lucide-react';
 import { useAuthStore } from "@/store/authStore";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import trialImg from '../assets/trial3.jpg';
 
 export default function LoginPage() {
@@ -86,9 +86,13 @@ export default function LoginPage() {
                   {isLoading ? 'Logging in...' : 'Login'}
                 </button>
               </motion.div>
+              
 
               {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
-              
+          
+                           <p>
+                            <Link to="/" className="text-secondary">Back</Link>
+                          </p>
             </form>
           </div>
         </div>

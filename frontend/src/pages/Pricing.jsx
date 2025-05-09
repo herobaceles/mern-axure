@@ -11,7 +11,6 @@ function Pricing() {
     'Paris Beach Club (Dining Area, Lockers & Showers)',
     'Sky Garden (7 AM–10 PM only, no food allowed)',
     'Convenience stores (7-Eleven, Food Stalls)',
-    'BDO ATM Machines',
     'Paid Laundry Services',
     'Pay Parking',
     '24/7 Security Assistance',

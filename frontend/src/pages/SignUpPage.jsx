@@ -2,91 +2,97 @@
 
 import { useState } from "react"
 import { useAuthStore } from "../store/authStore"
+import { Container, Row, Col, Form, Button, Card } from "react-bootstrap"
+import { useNavigate, Link } from "react-router-dom"
 import "bootstrap/dist/css/bootstrap.min.css"
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom";
-
+import trialImg from '../assets/trial3.jpg';
 
 function SignUpPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const { signup, isLoading, error } = useAuthStore()
+  const navigate = useNavigate()
 
-    const { signup, isLoading, error, user } = useAuthStore()
-    console.log(user)
-    const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await signup(email, password, name);
-    navigate("/verify-email");
+    await signup(email, password, name)
+    navigate("/verify-email")
   }
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
-        <Col md={8} lg={6}>
-          <Card className="shadow">
-            <Card.Header className="bg-primary text-white text-center py-3">
-              <h2>Create an Account</h2>
-            </Card.Header>
-            <Card.Body className="p-4">
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Full Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your full name"
-                  />
-                </Form.Group>
+    <Container fluid className="min-vh-100 d-flex align-items-center justify-content-center">
+      <Row className="w-100 shadow-lg rounded overflow-hidden" style={{ maxWidth: "900px" }}>
+        {/* Left Image Section */}
+        <Col md={6} className="d-none d-md-block p-0">
+          <img
+            src={trialImg} // Replace with your image path
+            alt="Room"
+            className="img-fluid h-100 w-100 object-fit-cover"
+            style={{ objectFit: "cover", height: "100%" }}
+          />
+        </Col>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Email Address</Form.Label>
-                  <Form.Control
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                  />
-                  <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                  </Form.Text>
-                </Form.Group>
+        {/* Right Form Section */}
+        <Col xs={12} md={6} className="bg-white p-5">
+          <div className="text-center mb-4">
+            <h2>Create an Account</h2>
+            <p className="text-muted">Please enter your details</p>
+          </div>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Full Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+              />
+            </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Create a password"
-                  />
-                </Form.Group>
-                {error && <p className="text-danger fs-6">{error}</p>}
-                <Button variant="primary" type="submit" className="w-100 py-2" disabled={isLoading}>
-                 {isLoading ? "Loading..." : "Sign Up"}
-                </Button>
-              </Form>
-            </Card.Body>
-            <Card.Footer className="text-center py-3 bg-light">
-              <p className="mb-0">
-                Already have an account?{" "}
-                <a href="#" className="text-primary">
-                  Log In
-                </a><Link to="/login" className="text-primary">Log In</Link>
+            <Form.Group className="mb-3">
+              <Form.Label>Email Address</Form.Label>
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+              />
+              <Form.Text className="text-muted">
+                We'll never share your email.
+              </Form.Text>
+            </Form.Group>
 
-              </p>
-              <p>
-                <a href="/">Back</a>
-              </p>
-            </Card.Footer>
-          </Card>
+            <Form.Group className="mb-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
+              />
+            </Form.Group>
+
+            {error && <p className="text-danger">{error}</p>}
+
+            <Button type="submit" className="w-100 py-2" disabled={isLoading}>
+              {isLoading ? "Loading..." : "Sign Up"}
+            </Button>
+          </Form>
+
+          <div className="text-center mt-4">
+            <p>
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary">Log In</Link>
+            </p>
+            <p>
+              <Link to="/" className="text-secondary">Back</Link>
+            </p>
+          </div>
         </Col>
       </Row>
     </Container>
   )
 }
 
-export default SignUpPage;
+export default SignUpPage
