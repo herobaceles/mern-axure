@@ -1,16 +1,42 @@
-import jwt from 'jsonwebtoken';
+// //3. generateJWTToken.js
 
-export const generateJWTToken = (res, userId) => {
- const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "7d"
- })
+// import jwt from 'jsonwebtoken';
 
- res.cookie('token', token, {
-    httpOnly: true, // cookie cannot be accessed by client side scripts
-    secure: process.env.NODE_ENV === 'production', // cookie will only be set on https
-    sameSite: 'strict', // cookie will only be set on the same site
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
- })
+// export const generateJWTToken = (res, userId) => {
+//  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+//     expiresIn: "7d"
+//  })
 
- return token;
-}
+//  res.cookie('token', token, {
+//     httpOnly: true, // cookie cannot be accessed by client side scripts
+//     secure: process.env.NODE_ENV === 'production', // cookie will only be set on https
+//     sameSite: 'strict', // cookie will only be set on the same site
+//     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+//  })
+
+//  return token;
+// }
+
+// backend/utils/generateJWTToken.js
+import jwt from "jsonwebtoken";
+
+export const generateJWTToken = (res, user) => {
+  const token = jwt.sign(
+    {
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+
+  return token;
+};
