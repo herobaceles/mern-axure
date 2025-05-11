@@ -9,6 +9,8 @@ import DashboardPage from "./pages/DashboardPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import Home from "./pages/Home";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import './index.css'
+
 
 const ProtectRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -51,7 +53,7 @@ function App() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid p-0 m-0">
        
       <Routes>
         <Route path="/" element={ <Home />} />
