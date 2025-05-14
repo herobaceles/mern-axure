@@ -1,4 +1,4 @@
-//4.user.js
+//user.js
 
 
 import mongoose from "mongoose";
