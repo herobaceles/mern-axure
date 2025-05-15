@@ -1,14 +1,17 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import HeroSection from '../components/HeroSection'
-import HomeLogin from './HomeLogin'
-import Chatbot from '@/components/chatbot'
+import Pricing from './Pricing'
+import Rooms from './Rooms'
 
 const Home = () => {
   return (
     <>
-    <HomeLogin />
-    <Chatbot />
+
+    <Navbar />
+    <HeroSection />
+    <Rooms />
+    <Pricing />
     </>
  
   )

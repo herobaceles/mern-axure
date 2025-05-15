@@ -88,7 +88,9 @@ function Rooms() {
 
   return (
     <div className="container py-4 text-center">
-      <h3 className="fw-semibold fs-5  mb-2">Rooms</h3>
+      <div className='container  d-flex  justify-content-start'></div>
+      <h3 className="fw-semibold fs-5  mb-2">ROOMS</h3>
+      <p>Your Perfect Escape, Just Around the Corner.</p>
       <div className="bg-dark mx-auto rounded-pill mb-4" style={{ height: '4px', width: '50px' }}></div>
 
       <div className="row g-3">

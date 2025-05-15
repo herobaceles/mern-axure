@@ -15,7 +15,7 @@ function NavBar() {
   };
 
   return (
-    <Navbar expand="lg" className="bg-transparent px-3 py-2">
+    <Navbar expand="lg" className="bg-transparent  px-3 py-2" >
       <Container fluid>
         <Navbar.Toggle aria-controls="navbar-center" />
         <Navbar.Collapse id="navbar-center">

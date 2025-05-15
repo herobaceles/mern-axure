@@ -1,7 +1,9 @@
+//chatbot.js
+
 const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
-const openaiBot = require('../chatbot/openaibot');
+const openaibot = require('../chatbot/openaibot');
 
 // Chatbot route
 router.post('/', async (req, res) => {
@@ -9,7 +11,7 @@ router.post('/', async (req, res) => {
   if (!userId) return res.status(401).json({ error: 'Not logged in' });
 
   const userInput = req.body.message;
-  const response = await openaiBot(userInput, userId);
+  const response = await openaibot(userInput, userId);
   res.json({ reply: response });
 });
 
