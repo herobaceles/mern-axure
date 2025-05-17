@@ -6,9 +6,7 @@ import { VerificationEmailPage } from "./pages/VerificationEmailPage";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import DashboardPage from "./pages/DashboardPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import Home from "./pages/Home";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
 import './index.css'
 
 
@@ -74,15 +72,8 @@ function App() {
           }
         />
         <Route path="/verify-email" element={<VerificationEmailPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-        <Route
-          path="/forgot-password"
-          element={
-            <AuthenticatedUserRoute>
-              <ForgotPasswordPage />
-            </AuthenticatedUserRoute>
-          }
-        />
+       
+      
         <Route
           path="/dashboard"
           element={

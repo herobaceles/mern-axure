@@ -125,56 +125,7 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  forgotPassword: async (email) => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await fetch(`${API_URL}/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email }),
-      });
+
   
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.message || "Forgot password failed");
-      }
-  
-      set({ isLoading: false, message: data.message });
-    } catch (error) {
-      set({ isLoading: false, error: error.message });
-      console.error("Forgot password error:", error);
-      throw error;
-    }
-  },
-  
-  resetPassword: async (token, password) => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await fetch(`${API_URL}/reset-password/${token}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ password }),
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.message || "Reset password failed");
-      }
-  
-      set({ isLoading: false, message: data.message });
-    } catch (error) {
-      set({ isLoading: false, error: error.message });
-      console.error("Reset password error:", error);
-      throw error;
-    }
-  },
-  
+
 }));

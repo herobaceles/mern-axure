@@ -21,10 +21,18 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    resetPasswordToken: String,
-    resetPasswordExpiresAt: Date,
+    // 🔐 6-digit code-based password reset
+  resetCode: {
+    type: String,
+  },
+  resetCodeExpiry: {
+    type: Date,
+  },
+
     verificationToken: String,
-    verificationTokenExpiresAt: Date
+    verificationTokenExpiresAt: Date,
+
+
 })
 
 export const User = mongoose.model("User", userSchema); 
