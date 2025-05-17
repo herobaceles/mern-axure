@@ -39,61 +39,67 @@ export default function LoginPage() {
           <div className="p-5 w-100" style={{ maxWidth: '400px' }}>
             <h2 className="fw-bold mb-3 text-dark text-center">Welcome Back</h2>
             <p className="text-muted text-center mb-4">Please enter your login details</p>
+<form onSubmit={handleSubmit}>
+  <div className="mb-3">
+    <label htmlFor="email" className="form-label">Email</label>
+    <div className="input-group">
+      <span className="input-group-text bg-white">
+        <Mail size={18} className="text-muted" />
+      </span>
+      <input
+        type="email"
+        id="email"
+        className="form-control"
+        placeholder="Enter your email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+    </div>
+  </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email</label>
-                <div className="input-group">
-                  <span className="input-group-text bg-white">
-                    <Mail size={18} className="text-muted" />
-                  </span>
-                  <input
-                    type="email"
-                    id="email"
-                    className="form-control"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+  <div className="mb-2">
+    <label htmlFor="password" className="form-label">Password</label>
+    <div className="input-group">
+      <span className="input-group-text bg-white">
+        <Lock size={18} className="text-muted" />
+      </span>
+      <input
+        type="password"
+        id="password"
+        className="form-control"
+        placeholder="Enter your password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+    </div>
+  </div>
 
-              <div className="mb-4">
-                <label htmlFor="password" className="form-label">Password</label>
-                <div className="input-group">
-                  <span className="input-group-text bg-white">
-                    <Lock size={18} className="text-muted" />
-                  </span>
-                  <input
-                    type="password"
-                    id="password"
-                    className="form-control"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+  {/* Forgot Password Link */}
+  <div className="mb-4 text-end">
+    <Link to="/forgot-password" className="text-decoration-none small text-primary">
+      Forgot Password?
+    </Link>
+  </div>
 
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100 py-2"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Logging in...' : 'Login'}
-                </button>
-              </motion.div>
-              
+  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+    <button
+      type="submit"
+      className="btn btn-primary w-100 py-2"
+      disabled={isLoading}
+    >
+      {isLoading ? 'Logging in...' : 'Login'}
+    </button>
+  </motion.div>
 
-              {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
-          
-                           <p>
-                            <Link to="/" className="text-secondary">Back</Link>
-                          </p>
-            </form>
+  {error && <div className="alert alert-danger mt-3" role="alert">{error}</div>}
+
+  <p className="mt-3 text-center">
+    <Link to="/" className="text-secondary">Back</Link>
+  </p>
+</form>
+
           </div>
         </div>
 

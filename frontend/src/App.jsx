@@ -7,40 +7,34 @@ import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import DashboardPage from "./pages/DashboardPage";
 import Home from "./pages/Home";
-import './index.css'
-
+import VerifyResetCodePage from "./pages/VerifyResetCodePage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage"; // ✅ Import the forgot password page
+import './index.css';
 
 const ProtectRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated && !user) {
     return <Navigate to="/" replace />;
   }
-
   return children;
 };
 
 const AuthenticatedUserRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
-  
   if (isAuthenticated && user) {
     return <Navigate to="/dashboard" replace />;
   }
-
   return children;
 };
-
 
 function App() {
   const { isCheckingAuth, checkAuth, logout, user } = useAuthStore();
 
-  // useEffect(() => {
-  //   checkAuth();
-  // }, [checkAuth]);
   useEffect(() => {
     const init = async () => await checkAuth();
     init();
   }, []);
-  // console.log(user)
 
   if (isCheckingAuth) {
     return <div>Loading...</div>;
@@ -52,9 +46,9 @@ function App() {
 
   return (
     <div className="container-fluid p-0 m-0">
-       
       <Routes>
-        <Route path="/" element={ <Home />} />
+        <Route path="/" element={<Home />} />
+        
         <Route
           path="/signup"
           element={
@@ -63,6 +57,7 @@ function App() {
             </AuthenticatedUserRoute>
           }
         />
+
         <Route
           path="/login"
           element={
@@ -71,9 +66,9 @@ function App() {
             </AuthenticatedUserRoute>
           }
         />
+
         <Route path="/verify-email" element={<VerificationEmailPage />} />
-       
-      
+
         <Route
           path="/dashboard"
           element={
@@ -82,9 +77,13 @@ function App() {
             </ProtectRoute>
           }
         />
+
+        {/* ✅ Password Reset Routes */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/verify-reset-code" element={<VerifyResetCodePage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
 
-      {/* React Toastify Container */}
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
