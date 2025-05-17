@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <>
 
-    <Navbar />
+  
     <HeroSection />
     <Rooms />
     <Pricing />
