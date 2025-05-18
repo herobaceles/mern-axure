@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as chrono from "chrono-node";
+import adminRoutes from "./routes/admin-route.js";
 
 import authRoutes from "./routes/auth-route.js";
 import { connectToDatabase } from "./database/connectionToDatabase.js";
 import { verifyToken } from "./middleware/verifyToken.js";
-import { User } from "./model/user.js";
+import User from "./model/user.js"; // this matches: export default User;
+
 import { Booking } from "./model/booking.js";
 import { askBot } from "./chatbot/openaiBot.js";
 import { createPaypalOrder, capturePaypalOrder } from "./utils/paypal.js";
@@ -25,6 +27,7 @@ app.use(cookieParser());
 connectToDatabase();
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/api/availability", (req, res) => {
   res.json({ availableRooms: ["Single", "Double", "Suite"] });

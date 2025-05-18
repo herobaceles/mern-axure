@@ -1,14 +1,13 @@
- // generateJWTToken.js
-
+// generateJWTToken.js
 
 import jwt from "jsonwebtoken";
-
 export const generateJWTToken = (res, user) => {
   const token = jwt.sign(
     {
       userId: user._id,
       name: user.name,
       email: user.email,
+      role: user.role, // ✅ make sure this is included
     },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }

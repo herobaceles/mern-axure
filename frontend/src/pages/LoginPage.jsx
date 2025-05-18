@@ -1,3 +1,5 @@
+//LoginPage.jsx
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock } from 'lucide-react';
@@ -12,11 +14,22 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const success = await login(email, password);
-    if (success) navigate("/dashboard");
-  };
+  e.preventDefault();
+  try {
+    await login(email, password);
+    const user = useAuthStore.getState().user;
 
+    console.log("Logged in user:", user);
+
+    if (user?.role === "admin") {
+      navigate("/admin"); // admin dashboard
+    } else {
+      navigate("/"); // client homepage
+    }
+  } catch (err) {
+    console.error("Login error:", err.message);
+  }
+};
   return (
     <div className="d-flex align-items-center justify-content-center" style={{ height: '100vh' }}>
       <div

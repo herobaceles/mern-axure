@@ -9,6 +9,7 @@ const Home = () => {
     <>
     <HomeLogin />
     <Chatbot />
+    
     </>
  
   )

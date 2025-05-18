@@ -20,7 +20,6 @@ router.post("/verify-email", verifyEmail);
 
 router.get("/check-auth", verifyToken, checkAuth);
 
-router.post("/verify-email", verifyEmail);
 
 /* -------------------------- Password Reset Flow -------------------------- */
 

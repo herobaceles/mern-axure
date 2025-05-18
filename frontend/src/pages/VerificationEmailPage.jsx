@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/authStore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function VerificationEmailPage() {
+export default function VerificationEmailPage() {
   const [value, setValue] = useState("");
   const { verifyEmail, isLoading, error, user } = useAuthStore();
 

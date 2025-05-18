@@ -1,6 +1,7 @@
 // auth-controller.js
 
-import { User } from "../model/user.js";
+import User from "../model/user.js";
+
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
@@ -28,17 +29,17 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = generateVerificationToken();
 
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      verificationToken,
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-    });
+   const user = new User({
+  name,
+  email,
+  password: hashedPassword,
+  role: "user",
+  verificationToken,
+  verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000
+});
 
-    await user.save();
-
-    generateJWTToken(res, user._id);
+await user.save(); // ✅ Save first
+generateJWTToken(res, user._id); // ✅ Then use it
 
     await sendVerificationEmail(user.email, verificationToken);
 
@@ -58,20 +59,25 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({ success: false, message: "Invalid credentials" });
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ success: false, message: "Invalid credentials" });
     }
+
     if (!user.isVerified) {
       return res.status(400).json({ success: false, message: "Email not verified" });
     }
 
-    generateJWTToken(res, user._id);
+    // ✅ Pass full user object here
+    generateJWTToken(res, user);
 
     res.status(200).json({
       success: true,
@@ -86,6 +92,7 @@ export const login = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 export const logout = async (req, res) => {
   try {

@@ -1,26 +1,31 @@
-//verifyToken.js
+//isAdmin.js
+
+
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
-  if (!token) return res.status(401).json({ success: false, message: "Unauthorized" });
+  // ✅ Check for token in cookies or Authorization header
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Decoded token:", decoded);
 
-    if (!decoded) return res.status(401).json({ success: false, message: "Unauthorized" });
-
-    req.userId = decoded.userId; // ✅ ADD THIS
+    req.userId = decoded.userId;
     req.user = {
       id: decoded.userId,
       name: decoded.name,
       email: decoded.email,
+      role: decoded.role, // ✅ Optional: if your token includes role
     };
 
     next();
   } catch (error) {
-    console.log(error);
-    return res.status(401).json({ success: false, message: "Unauthorized" });
+    console.log("JWT Error:", error);
+    return res.status(401).json({ success: false, message: "Unauthorized: Invalid token" });
   }
 };
