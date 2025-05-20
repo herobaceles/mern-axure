@@ -14,7 +14,7 @@ import express from "express";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { isAdmin } from "../middleware/isAdmin.js";
 import User from "../model/user.js";
-import { Booking } from "../model/booking.js";
+import  Booking  from "../model/booking.js";
 
 const router = express.Router();
 

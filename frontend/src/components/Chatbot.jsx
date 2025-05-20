@@ -1,10 +1,13 @@
+//c
+
+
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 const Chatbot = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { from: "bot", text: "Hello! How can I assist you with your AzureHub stay today?" },
+    { from: "bot", text: "Hi there! 🌿 How can I help you with your AzureHub staycation?" },
   ]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -39,11 +42,11 @@ const Chatbot = () => {
       const replyMessage =
         typeof response.data.reply === "string"
           ? response.data.reply
-          : response.data.reply?.message || "🤖 Sorry, I couldn't understand that.";
+          : response.data.reply?.message || "🌱 Sorry, I didn't catch that.";
 
       setMessages((msgs) => [...msgs, { from: "bot", text: replyMessage }]);
     } catch (err) {
-      setMessages((msgs) => [...msgs, { from: "bot", text: "❌ Sorry, something went wrong." }]);
+      setMessages((msgs) => [...msgs, { from: "bot", text: "❌ Something went wrong." }]);
     } finally {
       setLoading(false);
       setInput("");
@@ -52,7 +55,7 @@ const Chatbot = () => {
 
   const resetConversation = () => {
     setMessages([
-      { from: "bot", text: "Hello! How can I assist you with your AzureHub stay today?" },
+      { from: "bot", text: "Hi there! 🌿 How can I help you with your AzureHub staycation?" },
     ]);
     setInput("");
   };
@@ -74,7 +77,7 @@ const Chatbot = () => {
           href={part}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: "#1E90FF", textDecoration: "underline" }}
+          style={{ color: "#4CAF50", textDecoration: "underline" }}
         >
           {part}
         </a>
@@ -86,75 +89,72 @@ const Chatbot = () => {
 
   return (
     <>
-      {/* Floating Chat Button */}
-      <button
+      {/* Sticky Bar */}
+      <div
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: "fixed",
-          bottom: 24,
-          right: 24,
-          width: 70,
-          height: 70,
-          borderRadius: "50%",
-          background: "linear-gradient(135deg, #3A78D8, #1E90FF)",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-          fontSize: 28,
-          boxShadow: "0 8px 20px rgba(30, 144, 255, 0.5)",
-          transition: "background 0.3s ease",
-          zIndex: 1100,
+          bottom: 90,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "90%",
+          maxWidth: 600,
+          height: 60,
+          borderRadius: 30,
+          background: "linear-gradient(135deg, #A8E6CF, #4CAF50)",
+          color: "#fff",
+          fontSize: 18,
+          fontWeight: "600",
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 8px 20px rgba(76, 175, 80, 0.4)",
+          cursor: "pointer",
+          zIndex: 9999,
+          userSelect: "none",
         }}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.background = "linear-gradient(135deg, #5A9BF6, #3A78D8)")
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.background = "linear-gradient(135deg, #3A78D8, #1E90FF)")
-        }
-        aria-label={isOpen ? "Close chat" : "Open chat"}
         title={isOpen ? "Close chat" : "Open chat"}
       >
-        {isOpen ? "×" : "💬"}
-      </button>
+        {isOpen ? "Close Chat ✖️" : "Need Help? Chat with us 🌿"}
+      </div>
 
-      {/* Chat Popup */}
+      {/* Chat Window */}
       {isOpen && (
         <div
           style={{
             position: "fixed",
-            bottom: 110,
-            right: 24,
-            width: 420,
-            height: 480,
-            backgroundColor: "#f0f8ff",
-            border: "1px solid #3A78D8",
-            borderRadius: 16,
-            boxShadow: "0 12px 30px rgba(30, 144, 255, 0.25)",
+            bottom: 160,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "90%",
+            maxWidth: 600,
+            height: "75vh",
+            backgroundColor: "#F1F8E9",
+            border: "1px solid #81C784",
+            borderRadius: 20,
+            boxShadow: "0 12px 30px rgba(76, 175, 80, 0.25)",
             display: "flex",
             flexDirection: "column",
             fontFamily: "'Nunito', sans-serif",
-            zIndex: 1100,
-            animation: "fadeInScale 0.25s ease forwards",
+            zIndex: 9998,
+            animation: "slideUp 0.3s ease forwards",
           }}
         >
           {/* Header */}
           <div
             style={{
-              backgroundColor: "#1E90FF",
+              backgroundColor: "#66BB6A",
               padding: "14px 20px",
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
               fontWeight: "700",
-              fontSize: 18,
-              color: "white",
+              fontSize: 20,
+              color: "#fff",
               userSelect: "none",
-              boxShadow: "0 2px 6px rgba(30, 144, 255, 0.6)",
+              boxShadow: "0 2px 6px rgba(102, 187, 106, 0.6)",
             }}
           >
-            AzureHub Chat
+            AzureHub Staycation Assistant 🌴
           </div>
 
           {/* Messages */}
@@ -163,7 +163,7 @@ const Chatbot = () => {
               flex: 1,
               overflowY: "auto",
               padding: 16,
-              background: "#e6f0ff",
+              background: "#E8F5E9",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}
@@ -182,14 +182,14 @@ const Chatbot = () => {
                     display: "inline-block",
                     padding: "10px 16px",
                     borderRadius: 20,
-                    background: msg.from === "user" ? "#1E90FF" : "#cce0ff",
-                    color: msg.from === "user" ? "white" : "#003366",
+                    background: msg.from === "user" ? "#4CAF50" : "#C8E6C9",
+                    color: msg.from === "user" ? "#fff" : "#1B5E20",
                     maxWidth: "75%",
                     whiteSpace: "pre-wrap",
                     wordWrap: "break-word",
                     boxShadow:
                       msg.from === "user"
-                        ? "0 2px 8px rgba(30, 144, 255, 0.4)"
+                        ? "0 2px 8px rgba(76, 175, 80, 0.4)"
                         : "none",
                     fontSize: 15,
                   }}
@@ -206,8 +206,8 @@ const Chatbot = () => {
                     display: "inline-block",
                     padding: "10px 16px",
                     borderRadius: 20,
-                    background: "#cce0ff",
-                    color: "#003366",
+                    background: "#C8E6C9",
+                    color: "#1B5E20",
                     fontSize: 15,
                     fontStyle: "italic",
                   }}
@@ -224,15 +224,15 @@ const Chatbot = () => {
           <div
             style={{
               padding: 16,
-              borderTop: "1px solid #3A78D8",
-              backgroundColor: "#e6f0ff",
-              borderBottomLeftRadius: 16,
-              borderBottomRightRadius: 16,
+              borderTop: "1px solid #81C784",
+              backgroundColor: "#F1F8E9",
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
             }}
           >
             <input
               type="text"
-              placeholder="Ask about bookings, availability..."
+              placeholder="Ask about rooms, check-in, amenities..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -241,15 +241,12 @@ const Chatbot = () => {
                 width: "100%",
                 padding: "12px 14px",
                 borderRadius: 12,
-                border: "1.5px solid #3A78D8",
+                border: "1.5px solid #81C784",
                 fontSize: 15,
                 fontFamily: "'Nunito', sans-serif",
-                outlineColor: "#1E90FF",
-                transition: "border-color 0.2s ease",
+                outlineColor: "#66BB6A",
                 marginBottom: 10,
               }}
-              onFocus={(e) => (e.target.style.borderColor = "#1E90FF")}
-              onBlur={(e) => (e.target.style.borderColor = "#3A78D8")}
             />
 
             <div style={{ display: "flex", gap: 10 }}>
@@ -261,8 +258,8 @@ const Chatbot = () => {
                   padding: "12px 0",
                   borderRadius: 12,
                   backgroundColor:
-                    loading || !input.trim() ? "#a7c0ff" : "#1E90FF",
-                  color: "white",
+                    loading || !input.trim() ? "#A5D6A7" : "#4CAF50",
+                  color: "#fff",
                   border: "none",
                   cursor: loading || !input.trim() ? "not-allowed" : "pointer",
                   fontWeight: "600",
@@ -270,16 +267,7 @@ const Chatbot = () => {
                   boxShadow:
                     loading || !input.trim()
                       ? "none"
-                      : "0 4px 12px rgba(30,144,255,0.6)",
-                  transition: "background-color 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  if (!loading && input.trim())
-                    e.currentTarget.style.backgroundColor = "#1565c0";
-                }}
-                onMouseLeave={(e) => {
-                  if (!loading && input.trim())
-                    e.currentTarget.style.backgroundColor = "#1E90FF";
+                      : "0 4px 12px rgba(76,175,80,0.4)",
                 }}
               >
                 {loading ? "Sending..." : "Send"}
@@ -292,15 +280,13 @@ const Chatbot = () => {
                   padding: "12px 0",
                   width: 100,
                   borderRadius: 12,
-                  backgroundColor: "#FFD166",
-                  color: "#003366",
+                  backgroundColor: "#FFEB3B",
+                  color: "#33691E",
                   fontWeight: "600",
                   border: "none",
                   cursor: loading ? "not-allowed" : "pointer",
-                  transition: "background-color 0.3s ease",
-                  boxShadow: "0 4px 12px rgba(255,209,102,0.6)",
+                  boxShadow: "0 4px 12px rgba(255,235,59,0.6)",
                 }}
-                title="Reset conversation"
               >
                 Reset 🔄
               </button>
@@ -309,30 +295,31 @@ const Chatbot = () => {
         </div>
       )}
 
-      {/* Animations & styles */}
+      {/* Animations */}
       <style>{`
-        @keyframes fadeInScale {
-          0% {opacity: 0; transform: scale(0.9);}
-          100% {opacity: 1; transform: scale(1);}
+        @keyframes slideUp {
+          0% { opacity: 0; transform: translate(-50%, 40px); }
+          100% { opacity: 1; transform: translate(-50%, 0); }
         }
         .chat-messages-container::-webkit-scrollbar {
           display: none;
+        }
+        @keyframes blink {
+          0%, 80%, 100% { opacity: 0; }
+          40% { opacity: 1; }
         }
       `}</style>
     </>
   );
 };
 
-// Typing animation components
-const TypingAnimation = () => {
-  return (
-    <span style={{ display: "inline-block", width: 50 }}>
-      <Dot delay={0} />
-      <Dot delay={0.2} />
-      <Dot delay={0.4} />
-    </span>
-  );
-};
+const TypingAnimation = () => (
+  <span style={{ display: "inline-block", width: 50 }}>
+    <Dot delay={0} />
+    <Dot delay={0.2} />
+    <Dot delay={0.4} />
+  </span>
+);
 
 const Dot = ({ delay }) => (
   <span
@@ -341,7 +328,7 @@ const Dot = ({ delay }) => (
       width: 8,
       height: 8,
       margin: "0 3px",
-      backgroundColor: "#003366",
+      backgroundColor: "#2E7D32",
       borderRadius: "50%",
       opacity: 0,
       animation: `blink 1.4s infinite`,
@@ -349,19 +336,5 @@ const Dot = ({ delay }) => (
     }}
   />
 );
-
-const styleSheet = `
-@keyframes blink {
-  0%, 80%, 100% { opacity: 0; }
-  40% { opacity: 1; }
-}
-`;
-
-if (typeof window !== "undefined" && !document.getElementById("typing-dot-style")) {
-  const styleTag = document.createElement("style");
-  styleTag.id = "typing-dot-style";
-  styleTag.innerHTML = styleSheet;
-  document.head.appendChild(styleTag);
-}
 
 export default Chatbot;

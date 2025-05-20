@@ -1,153 +1,171 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore";
-import axios from "axios";
-import { Spinner, Table, Card, Badge } from "react-bootstrap";
+import { useAuthStore } from "../store/authStore";
 
-function AdminDashboard() {
-  const [adminMessage, setAdminMessage] = useState("");
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth);
+
   const [users, setUsers] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [unauthorized, setUnauthorized] = useState(false);
-  const { user } = useAuthStore();
-  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const [usersRes, bookingsRes] = await Promise.all([
+        fetch("http://localhost:3000/api/admin/users", { credentials: "include" }),
+        fetch("http://localhost:3000/api/admin/bookings", { credentials: "include" }),
+      ]);
+
+      if (!usersRes.ok || !bookingsRes.ok) {
+        throw new Error("Failed to fetch admin data");
+      }
+
+      const usersData = await usersRes.json();
+      const bookingsData = await bookingsRes.json();
+
+      const extractedUsers = Array.isArray(usersData) ? usersData : usersData.users || [];
+      const extractedBookings = Array.isArray(bookingsData) ? bookingsData : bookingsData.bookings || [];
+
+      setUsers(extractedUsers);
+      setBookings(extractedBookings);
+    } catch (err) {
+      console.error("Error fetching admin data:", err);
+      setError("Failed to load admin data.");
+    }
+  };
+
+  const handleLogout = async () => {
+    if (!window.confirm("Are you sure you want to log out?")) return;
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch (err) {
+      console.error("Logout failed:", err);
+      alert("Logout failed. Please try again.");
+    }
+  };
 
   useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        if (!user || user.role !== "admin") {
-          setUnauthorized(true);
-          return;
-        }
+    if (!isAuthenticated && !isCheckingAuth) {
+      navigate("/login");
+    } else if (isAuthenticated && user?.role !== "admin") {
+      navigate("/");
+    } else {
+      fetchData();
+    }
+  }, [isAuthenticated, isCheckingAuth]);
 
-        const [dashboardRes, usersRes, bookingsRes] = await Promise.all([
-          axios.get("/api/admin/admin-dashboard", { withCredentials: true }),
-          axios.get("/api/admin/users", { withCredentials: true }),
-          axios.get("/api/admin/bookings", { withCredentials: true }),
-        ]);
-
-        setAdminMessage(dashboardRes.data.message);
-        setUsers(usersRes.data.users || []);
-        setBookings(bookingsRes.data.bookings || []);
-      } catch (err) {
-        console.error("Admin fetch error:", err);
-        setUnauthorized(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAdminData();
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div className="d-flex vh-100 justify-content-center align-items-center bg-light">
-        <Spinner animation="border" variant="primary" />
-      </div>
-    );
-  }
-
-  if (unauthorized) {
-    return (
-      <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-light">
-        <h3 className="text-danger mb-3">Access Denied</h3>
-        <button className="btn btn-outline-primary" onClick={() => navigate("/")}>
-          Go Back Home
-        </button>
-      </div>
-    );
+  if (isCheckingAuth) {
+    return <div className="text-center mt-5">Checking authentication...</div>;
   }
 
   return (
-    <div className="container py-5">
-      <div className="text-center mb-5">
-        <h1 className="mb-3">Admin Dashboard</h1>
-        <p className="lead text-muted">{adminMessage}</p>
+    <div className="d-flex">
+      {/* Sidebar */}
+      <div className="bg-dark text-white vh-100 p-3" style={{ width: "250px", position: "fixed", left: 0, top: 0 }}>
+        <h4 className="mb-4">Admin Panel</h4>
+        <ul className="nav flex-column">
+          <li className="nav-item mb-2">
+            <span className="nav-link text-white">Dashboard</span>
+          </li>
+          <li className="nav-item mt-4">
+            <button className="btn btn-outline-light w-100" onClick={handleLogout}>
+              Logout
+            </button>
+          </li>
+        </ul>
       </div>
 
-      <Card className="mb-5 shadow-sm">
-        <Card.Header as="h4" className="bg-primary text-white"> User Accounts</Card.Header>
-        <Card.Body>
-          <Table striped bordered hover responsive>
-            <thead className="table-dark">
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Verified</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.length > 0 ? (
-                users.map((u) => (
-                  <tr key={u._id}>
-                    <td>{u.name}</td>
-                    <td>{u.email}</td>
-                    <td>
-                      {u.isVerified ? (
-                        <Badge bg="success">Yes</Badge>
-                      ) : (
-                        <Badge bg="secondary">No</Badge>
-                      )}
-                    </td>
-                    <td>
-                      <Badge bg={u.role === "admin" ? "danger" : "info"}>
-                        {u.role}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="text-center">No users found.</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+      {/* Main content */}
+      <div className="flex-grow-1 ms-250" style={{ marginLeft: "250px" }}>
+        {/* Top Navbar */}
+        <nav className="navbar navbar-light bg-white shadow-sm px-4">
+          <span className="navbar-brand mb-0 h5">Welcome, Admin</span>
+        </nav>
 
-      <Card className="shadow-sm">
-        <Card.Header as="h4" className="bg-success text-white"> Bookings</Card.Header>
-        <Card.Body>
-          <Table striped bordered hover responsive>
-            <thead className="table-dark">
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Room Type</th>
-                <th>Check-In</th>
-                <th>Check-Out</th>
-                <th>Nights</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.length > 0 ? (
-                bookings.map((b) => (
-                  <tr key={b._id}>
-                    <td>{b.name}</td>
-                    <td>{b.email}</td>
-                    <td>{b.roomType}</td>
-                    <td>{new Date(b.checkIn).toLocaleDateString()}</td>
-                    <td>{new Date(b.checkOut).toLocaleDateString()}</td>
-                    <td>{b.nights}</td>
-                  </tr>
-                ))
+        {/* Content Area */}
+        <div className="container-fluid mt-4">
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          {/* Users */}
+          <div className="card mb-5">
+            <div className="card-header">
+              <h5>All Users</h5>
+            </div>
+            <div className="card-body">
+              {users.length === 0 ? (
+                <p>No users found.</p>
               ) : (
-                <tr>
-                  <td colSpan="6" className="text-center">No bookings found.</td>
-                </tr>
+                <div className="table-responsive">
+                  <table className="table table-bordered table-striped">
+                    <thead className="table-light">
+                      <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((u) => (
+                        <tr key={u._id}>
+                          <td>{u._id}</td>
+                          <td>{u.email}</td>
+                          <td>{u.name}</td>
+                          <td>{u.role}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+            </div>
+          </div>
+
+          {/* Bookings */}
+          <div className="card mb-5">
+            <div className="card-header">
+              <h5>All Bookings</h5>
+            </div>
+            <div className="card-body">
+              {bookings.length === 0 ? (
+                <p>No bookings found.</p>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-bordered table-striped">
+                    <thead className="table-light">
+                      <tr>
+                        <th>ID</th>
+                        <th>Guest Name</th>
+                        <th>Room Type</th>
+                        <th>Check-In</th>
+                        <th>Check-Out</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bookings.map((b) => (
+                        <tr key={b._id}>
+                          <td>{b._id}</td>
+                          <td>{b.guestName}</td>
+                          <td>{b.roomType}</td>
+                          <td>{new Date(b.checkIn).toLocaleDateString()}</td>
+                          <td>{new Date(b.checkOut).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default AdminDashboard;

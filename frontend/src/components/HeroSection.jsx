@@ -1,11 +1,14 @@
+
+
 import React from 'react';
 import trialimg from '../assets/trial10.jpg';
-import NavBar from './NavBar'; // import NavBar component
+import NavBar from './Navbar'; // import NavBar component
 
 const HeroSection = () => {
   return (
-    <div className="container-fluid p-0 m-0">
+    <div  className="container-fluid p-0 m-0">
       <div
+      id="hero-section" 
         className="hero-section position-relative text-white"
         style={{
           height: '100vh',
@@ -28,7 +31,7 @@ const HeroSection = () => {
         ></div>
 
         {/* NavBar Component */}
-          <NavBar />
+        
 
         {/* Hero Text Content */}
         <div

@@ -66,8 +66,11 @@ app.post("/api/ask", verifyToken, async (req, res) => {
           const order = await createPaypalOrder(downPayment);
           const approvalUrl = order.links.find(link => link.rel === "approve").href;
 
+          // Store booking details including name and email for later capture
           pendingBookings.set(order.id, {
             userId: user._id,
+            name: user.name,       // <-- Added name
+            email: user.email,     // <-- Added email
             roomType,
             checkIn,
             checkOut,
@@ -131,6 +134,15 @@ app.post("/api/ask", verifyToken, async (req, res) => {
     res.status(500).json({ error: "Failed to process request" });
   }
 });
+app.get('/api/bookings',verifyToken, async (req, res) => {
+  // req.user is set by your auth middleware after verifying the JWT or session
+  try {
+    const bookings = await Booking.find({ userId: req.user._id });
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve bookings' });
+  }
+});
 
 // ✅ PayPal success route
 app.get("/paypal/success", async (req, res) => {
@@ -150,6 +162,8 @@ app.get("/paypal/success", async (req, res) => {
 
     const newBooking = new Booking({
       userId: bookingData.userId,
+      name: bookingData.name,       // <-- Added name
+      email: bookingData.email,     // <-- Added email
       roomType: bookingData.roomType,
       checkIn: bookingData.checkIn,
       checkOut: bookingData.checkOut,

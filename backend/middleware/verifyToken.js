@@ -1,5 +1,4 @@
-//isAdmin.js
-
+//verifyToken.js
 
 import jwt from "jsonwebtoken";
 

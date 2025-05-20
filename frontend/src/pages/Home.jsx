@@ -1,21 +1,32 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import HeroSection from '../components/HeroSection'
-import Pricing from './Pricing'
+import PropTypes from 'prop-types'
+import HeroSection from '@/components/HeroSection'
 import Rooms from './Rooms'
+import Pricing from './Pricing'
 import Footer from '@/components/Footer'
-
-const Home = () => {
+import About from './About'
+const Home = props => {
   return (
     <>
+   
+      <HeroSection />
 
-    <HeroSection />
-    <Rooms />
-    <Pricing />
-    <Footer />
+
+      <section id="rooms">
+        <Rooms />
+      </section>
+
+      <section id="pricing">
+        <Pricing />
+      </section>
+         <section id="about">
+        <About />
+      </section>
+      <Footer />
     </>
- 
   )
 }
+
+
 
 export default Home

@@ -1,39 +1,39 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
-import Home from "./pages/Home";
 import VerifyResetCodePage from "./pages/VerifyResetCodePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import AdminDashboard from "./pages/AdminDashboard";
-import VerificationEmailPage from "./pages/VerificationEmailPage"; // ✅
+import VerificationEmailPage from "./pages/VerificationEmailPage";
+import Rooms from "./pages/Rooms";
+import Pricing from "./pages/Pricing";
+import Home from "./pages/Home";
+import About from "./pages/About";
+
+import ChangePassword from "./pages/ChangePassword";
+import NavBar from "./components/Navbar";
 
 import { useAuthStore } from "./store/authStore";
 
 import "./index.css";
 
-// 🔐 Protect routes for authenticated users
+// Route guards
 const ProtectRoute = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/" replace />;
-  }
-
-  // Prevent admin from accessing user dashboard
-  if (user.role === "admin") {
-    return <Navigate to="/admin" replace />;
-  }
-
+  const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
+  if (isCheckingAuth) return null;
+  if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
+  if (user.role === "admin") return <Navigate to="/admin" replace />;
   return children;
 };
 
-// 🚫 Block authenticated users from accessing login/signup
 const AuthenticatedUserRoute = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
+  if (isCheckingAuth) return null;
   if (isAuthenticated && user) {
     return user.role === "admin" ? (
       <Navigate to="/admin" replace />
@@ -44,18 +44,18 @@ const AuthenticatedUserRoute = ({ children }) => {
   return children;
 };
 
-// 🔐 Protect admin-only routes
 const AdminRoute = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated || !user || user.role !== "admin") {
+  const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
+  if (isCheckingAuth) return null;
+  if (!isAuthenticated || user?.role !== "admin") {
     return <Navigate to="/" replace />;
   }
   return children;
 };
 
-// 🛡️ Block admin from accessing public routes like Home
 const ClientOnlyRoute = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, isCheckingAuth } = useAuthStore();
+  if (isCheckingAuth) return null;
   if (isAuthenticated && user?.role === "admin") {
     return <Navigate to="/admin" replace />;
   }
@@ -63,21 +63,26 @@ const ClientOnlyRoute = ({ children }) => {
 };
 
 function App() {
-  const { isCheckingAuth, checkAuth } = useAuthStore();
+  const location = useLocation(); // Detect the current path
+  const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
 
   useEffect(() => {
-    const init = async () => await checkAuth();
-    init();
-  }, []);
+    checkAuth();
+  }, [checkAuth]);
 
-  if (isCheckingAuth) {
-    return <div>Loading...</div>;
-  }
+  if (isCheckingAuth) return <div>Loading...</div>;
+
+  // List of routes where NavBar should be hidden
+  const hideNavRoutes = ["/login", "/signup", "/admin"];
+  const shouldHideNav = hideNavRoutes.includes(location.pathname);
 
   return (
     <div className="container-fluid p-0 m-0">
+      {!shouldHideNav && <NavBar />}
+
       <Routes>
-        {/* Public Home */}
+        {/* Public */}
         <Route
           path="/"
           element={
@@ -86,6 +91,10 @@ function App() {
             </ClientOnlyRoute>
           }
         />
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/change-password" element={<ChangePassword />} />
 
         {/* Auth */}
         <Route
@@ -105,8 +114,11 @@ function App() {
           }
         />
         <Route path="/verify-email" element={<VerificationEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/verify-reset-code" element={<VerifyResetCodePage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        {/* Authenticated User Dashboard */}
+        {/* Protected */}
         <Route
           path="/dashboard"
           element={
@@ -116,7 +128,7 @@ function App() {
           }
         />
 
-        {/* Admin Dashboard */}
+        {/* Admin */}
         <Route
           path="/admin"
           element={
@@ -126,10 +138,8 @@ function App() {
           }
         />
 
-        {/* Password Reset Flow */}
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/verify-reset-code" element={<VerifyResetCodePage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />

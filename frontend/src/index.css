@@ -21,3 +21,18 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+.transition-navbar {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar-top {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: white;
+}
+
+.navbar-scrolled {
+  background-color: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  color: #333;
+}
