@@ -41,10 +41,10 @@ const Footer = () => {
           <Col md={4}>
             <h5 style={{ marginBottom: '0.5rem' }}>Contact Us</h5>
             <address style={{ marginBottom: 0, fontStyle: 'normal' }}>
-              123 Azure Street<br />
-              Staycation City, AZ 12345<br />
-              Email: <a href="mailto:info@azurehub.com" style={{ color: '#eee' }}>info@azurehub.com</a><br />
-              Phone: <a href="tel:+1234567890" style={{ color: '#eee' }}>+1 (234) 567-890</a>
+              Paranuaque<br />
+              Manila<br />
+              Email: <a href="mailto:info@azurehub.com" style={{ color: '#eee' }}>ahubscaps1111@gmail.com</a><br />
+              Phone: <a href="tel:+1234567890" style={{ color: '#eee' }}>+63 (234) 111-222</a>
             </address>
           </Col>
         </Row>

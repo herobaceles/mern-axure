@@ -78,7 +78,7 @@ app.post("/api/ask", verifyToken, async (req, res) => {
           });
 
          return {
-  message: `🛏️ To confirm your **${roomType}** booking from **${checkIn.toDateString()}** to **${checkOut.toDateString()}** for **${nights} night(s)**, please pay a **$${downPayment} downpayment**.\n\n👉 [Click here to pay via PayPal](<${approvalUrl}>)\n\nOnce payment is received, your booking will be finalized.`
+  message: `🛏️ To confirm your **${roomType}** booking from **${checkIn.toDateString()}** to **${checkOut.toDateString()}** for **${nights} night(s)**, please pay a **$${downPayment} downpayment**.\n\n👉 [Click here to pay via PayPal](${approvalUrl}\n\nOnce payment is received, your booking will be finalized.`
 };
 
         } catch (err) {
@@ -109,24 +109,26 @@ app.post("/api/ask", verifyToken, async (req, res) => {
           : `❌ No booking found with that ID.`;
       },
 
-      checkAvailability: async (roomType, checkInRaw, nights) => {
-        const checkIn = chrono.parseDate(checkInRaw);
-        const checkOut = new Date(checkIn);
-        checkOut.setDate(checkOut.getDate() + nights);
+       checkAvailability: async (roomType, checkInRaw, nights) => {
+    const checkIn = chrono.parseDate(checkInRaw);
+    const checkOut = new Date(checkIn);
+    checkOut.setDate(checkOut.getDate() + nights);
 
-        const overlapping = await Booking.find({
-          roomType,
-          $or: [
-            { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } }
-          ]
-        });
+    // This queries ALL bookings (no user filter) to find overlap
+    const overlapping = await Booking.find({
+      roomType,
+      $or: [
+        { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } }
+      ]
+    });
 
-        if (overlapping.length > 0) {
-          return `❌ Sorry, the ${roomType} room is not available from ${checkIn.toDateString()} to ${checkOut.toDateString()}.`;
-        } else {
-          return `✅ The ${roomType} room is available from ${checkIn.toDateString()} to ${checkOut.toDateString()}.`;
-        }
-      }
+    if (overlapping.length > 0) {
+      return `❌ Sorry, the ${roomType} room is not available from ${checkIn.toDateString()} to ${checkOut.toDateString()}.`;
+    } else {
+      return `✅ The ${roomType} room is available from ${checkIn.toDateString()} to ${checkOut.toDateString()}.`;
+    }
+  },
+
     });
 
     res.json({ reply });
@@ -188,12 +190,29 @@ app.get("/paypal/success", async (req, res) => {
     });
 
     res.send(`
-      <h2>✅ Payment Successful!</h2>
-      <p>Thank you for your booking. Your reservation has been confirmed.</p>
+  <div style="
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background: #f4fff8;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    text-align: center;
+  ">
+    <h2 style="color: #007f5f; font-size: 28px; margin-bottom: 20px;">✅ Payment Successful!</h2>
+    <p style="font-size: 16px; margin-bottom: 10px;">
+      Thank you for your booking. Your reservation has been <strong>confirmed</strong>.
+    </p>
+    <div style="text-align: left; margin-top: 25px; padding: 20px; background: white; border-radius: 8px;">
       <p><strong>Room Type:</strong> ${newBooking.roomType}</p>
       <p><strong>Check-in:</strong> ${newBooking.checkIn.toDateString()}</p>
       <p><strong>Check-out:</strong> ${newBooking.checkOut.toDateString()}</p>
-    `);
+    </div>
+  </div>
+`);
+
   } catch (err) {
     console.error("❌ PayPal capture error:", err);
     res.status(500).send("Failed to confirm your booking. Please contact support.");

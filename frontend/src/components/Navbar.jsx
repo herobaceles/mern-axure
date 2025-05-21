@@ -56,6 +56,7 @@ function NavBar() {
 
   const isScrolledOrNotHome = scrolled || !isHomeRoute;
   const fixedPosition = isMobile ? 'top' : isScrolledOrNotHome ? 'bottom' : 'top';
+  const greenColor = '#007f5f';
 
   return (
     <>
@@ -81,7 +82,7 @@ function NavBar() {
             style={{
               letterSpacing: '1.2px',
               userSelect: 'none',
-              color: isScrolledOrNotHome ? '#007f5f' : 'white',
+              color: isScrolledOrNotHome ? greenColor : 'white',
             }}
           >
             AzureHub
@@ -106,7 +107,6 @@ function NavBar() {
                     } else if (item.scrollToId && location.pathname !== '/dashboard') {
                       e.preventDefault();
                       navigate('/dashboard');
-                      // Delay scrolling to ensure DOM is loaded after navigation
                       setTimeout(() => {
                         const el = document.getElementById(item.scrollToId);
                         if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -121,7 +121,7 @@ function NavBar() {
                     letterSpacing: '0.05em',
                     color:
                       hoveredLink === item.label
-                        ? '#007f5f'
+                        ? greenColor
                         : isScrolledOrNotHome
                         ? '#333'
                         : 'white',
@@ -144,13 +144,21 @@ function NavBar() {
                 <>
                   <div
                     className="d-flex flex-column align-items-end me-3"
-                    style={{ color: isScrolledOrNotHome ? '#007f5f' : 'white', cursor: 'pointer' }}
-                    onClick={() => setShowLogoutModal(true)}
+                    style={{ color: isScrolledOrNotHome ? greenColor : 'white', cursor: 'pointer' }}
                     title="Click to logout"
                   >
                     <div className="fw-semibold">{user?.name || 'User'}</div>
                     <small style={{ fontSize: '0.8rem' }}>{user?.email || 'No email'}</small>
                   </div>
+                  <Button
+                    variant="outline-success"
+                    size="sm"
+                    className="ms-2"
+                    style={{ borderColor: greenColor, color: greenColor }}
+                    onClick={() => setShowLogoutModal(true)}
+                  >
+                    Logout
+                  </Button>
                 </>
               ) : (
                 <>
@@ -158,7 +166,7 @@ function NavBar() {
                     as={NavLink}
                     to="/login"
                     className="mx-2 fw-medium"
-                    style={{ color: isScrolledOrNotHome ? '#007f5f' : 'white' }}
+                    style={{ color: isScrolledOrNotHome ? greenColor : 'white' }}
                   >
                     Sign in
                   </Nav.Link>
@@ -166,7 +174,7 @@ function NavBar() {
                     as={NavLink}
                     to="/signup"
                     className="mx-2 fw-medium"
-                    style={{ color: isScrolledOrNotHome ? '#007f5f' : 'white' }}
+                    style={{ color: isScrolledOrNotHome ? greenColor : 'white' }}
                   >
                     Sign up
                   </Nav.Link>
@@ -191,14 +199,22 @@ function NavBar() {
         >
           <Modal.Title className="fw-bold">Confirm Logout</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="text-center" style={{ fontSize: '1rem', padding: '1.5rem' }}>
+        <Modal.Body className="text-center" style={{ fontSize: '1rem', padding: '1rem' }}>
           Are you sure you want to log out?
         </Modal.Body>
         <Modal.Footer style={{ borderTop: '1px solid #e0e0e0', justifyContent: 'center' }}>
           <Button variant="secondary" onClick={() => setShowLogoutModal(false)} style={{ minWidth: '100px' }}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmLogout} style={{ minWidth: '100px' }}>
+          <Button
+            onClick={confirmLogout}
+            style={{
+              backgroundColor: greenColor,
+              borderColor: greenColor,
+              color: 'white',
+              minWidth: '100px',
+            }}
+          >
             Logout
           </Button>
         </Modal.Footer>
