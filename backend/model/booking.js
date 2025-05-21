@@ -11,5 +11,5 @@ const bookingSchema = new mongoose.Schema({
   paid: { type: Boolean, default: false },
 });
 
-export const Booking = mongoose.model("Booking", bookingSchema); // ✅ named export
-export default Booking; // ✅ Now it's a default export
+export const Booking = mongoose.model("Booking", bookingSchema);
+export default Booking;

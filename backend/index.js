@@ -77,9 +77,10 @@ app.post("/api/ask", verifyToken, async (req, res) => {
             nights,
           });
 
-          return {
-            message: `🛏️ To confirm your **${roomType}** booking from **${checkIn.toDateString()}** to **${checkOut.toDateString()}** for **${nights} night(s)**, please pay a **$${downPayment} downpayment**.\n\n👉 [Click here to pay via PayPal](${approvalUrl})\n\nOnce payment is received, your booking will be finalized.`
-          };
+         return {
+  message: `🛏️ To confirm your **${roomType}** booking from **${checkIn.toDateString()}** to **${checkOut.toDateString()}** for **${nights} night(s)**, please pay a **$${downPayment} downpayment**.\n\n👉 [Click here to pay via PayPal](<${approvalUrl}>)\n\nOnce payment is received, your booking will be finalized.`
+};
+
         } catch (err) {
           console.error("PayPal error:", err);
           return { message: "❌ Failed to initiate PayPal payment. Please try again later." };
@@ -134,15 +135,18 @@ app.post("/api/ask", verifyToken, async (req, res) => {
     res.status(500).json({ error: "Failed to process request" });
   }
 });
-app.get('/api/bookings',verifyToken, async (req, res) => {
-  // req.user is set by your auth middleware after verifying the JWT or session
+app.get('/api/bookings', verifyToken, async (req, res) => {
+  console.log("User ID from token:", req.userId);
   try {
-    const bookings = await Booking.find({ userId: req.user._id });
+    const bookings = await Booking.find({ userId: req.userId }).sort({ checkIn: -1 });
+    console.log("Found bookings:", bookings.length);
     res.json(bookings);
   } catch (error) {
+    console.error("❌ Error retrieving bookings:", error);
     res.status(500).json({ error: 'Failed to retrieve bookings' });
   }
 });
+
 
 // ✅ PayPal success route
 app.get("/paypal/success", async (req, res) => {

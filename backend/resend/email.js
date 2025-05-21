@@ -34,16 +34,27 @@ export const sendWelcomeEmail = async (email, name) => {
   }
 };
 
-export const sendPasswordResetEmail = async (email, resetURL) => {
+export const sendPasswordResetEmail = async (email, otp) => {
   try {
-    const { data, error } = await resend.emails.send({
+    const response = await resend.emails.send({
       from: "AZUREHUB <onboarding@resend.dev>",
       to: [email],
-      subject: "Reset Your Password",
-      html: `Click <a href="${resetURL}">here</a> to reset your password`,
+      subject: "Your Password Reset OTP",
+      html: `
+        <p>Your password reset code is:</p>
+        <h2 style="letter-spacing: 3px;">${otp}</h2>
+        <p>This code will expire in 10 minutes.</p>
+      `,
     });
-  } catch (error) {
-    console.log("error sending password reset email", error);
+
+    if (response.error) {
+      console.error("Resend API error:", response.error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Error sending OTP email:", err);
+    return false;
   }
 };
 

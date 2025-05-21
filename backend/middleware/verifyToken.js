@@ -1,9 +1,6 @@
-//verifyToken.js
-
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-  // ✅ Check for token in cookies or Authorization header
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
   if (!token) {
@@ -19,7 +16,7 @@ export const verifyToken = (req, res, next) => {
       id: decoded.userId,
       name: decoded.name,
       email: decoded.email,
-      role: decoded.role, // ✅ Optional: if your token includes role
+      role: decoded.role,
     };
 
     next();

@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
+import Bookings from './pages/Bookings';
 
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
@@ -74,7 +75,15 @@ function App() {
   if (isCheckingAuth) return <div>Loading...</div>;
 
   // List of routes where NavBar should be hidden
-  const hideNavRoutes = ["/login", "/signup", "/admin"];
+const hideNavRoutes = [
+  "/login",
+  "/signup",
+  "/admin",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/verify-reset-code"
+];
   const shouldHideNav = hideNavRoutes.includes(location.pathname);
 
   return (
@@ -113,10 +122,13 @@ function App() {
             </AuthenticatedUserRoute>
           }
         />
+
         <Route path="/verify-email" element={<VerificationEmailPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-reset-code" element={<VerifyResetCodePage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        
+<Route path="/bookings" element={<Bookings />} />
 
         {/* Protected */}
         <Route

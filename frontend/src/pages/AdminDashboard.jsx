@@ -49,6 +49,29 @@ const AdminDashboard = () => {
     }
   };
 
+  // New: Delete user function
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Failed to delete user");
+      }
+
+      // Update UI by removing deleted user from state
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+    } catch (err) {
+      console.error("Delete user error:", err);
+      alert(err.message || "Failed to delete user");
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated && !isCheckingAuth) {
       navigate("/login");
@@ -66,7 +89,10 @@ const AdminDashboard = () => {
   return (
     <div className="d-flex">
       {/* Sidebar */}
-      <div className="bg-dark text-white vh-100 p-3" style={{ width: "250px", position: "fixed", left: 0, top: 0 }}>
+      <div
+        className="bg-dark text-white vh-100 p-3"
+        style={{ width: "250px", position: "fixed", left: 0, top: 0 }}
+      >
         <h4 className="mb-4">Admin Panel</h4>
         <ul className="nav flex-column">
           <li className="nav-item mb-2">
@@ -108,6 +134,7 @@ const AdminDashboard = () => {
                         <th>Email</th>
                         <th>Name</th>
                         <th>Role</th>
+                        <th>Actions</th> {/* New column */}
                       </tr>
                     </thead>
                     <tbody>
@@ -117,6 +144,20 @@ const AdminDashboard = () => {
                           <td>{u.email}</td>
                           <td>{u.name}</td>
                           <td>{u.role}</td>
+                          <td>
+                            <button
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleDeleteUser(u._id)}
+                              disabled={u._id === user?._id} // Disable deleting own account
+                              title={
+                                u._id === user?._id
+                                  ? "You cannot delete your own account"
+                                  : "Delete User"
+                              }
+                            >
+                              Delete
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>

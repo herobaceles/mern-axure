@@ -6,6 +6,7 @@ import HeroSection from '../components/HeroSection'
 import Pricing from './Pricing'
 import Footer from '@/components/Footer'
 import About from './About'
+import Bookings from './Bookings'
 const DashboardPage = () => {
   return (
     <>
@@ -15,6 +16,10 @@ const DashboardPage = () => {
 
       <section id="rooms">
         <Rooms />
+      </section>
+
+      <section id="bookings">
+        <Bookings />
       </section>
 
       <section id="pricing">

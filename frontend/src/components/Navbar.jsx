@@ -5,7 +5,6 @@ import { Button, Modal } from 'react-bootstrap';
 import { useAuthStore } from '@/store/authStore';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { FaUserCircle } from 'react-icons/fa';
 
 function NavBar() {
   const { user, isAuthenticated, logout, checkAuth, isCheckingAuth } = useAuthStore();
@@ -15,19 +14,15 @@ function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showProfileModal, setShowProfileModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // NEW STATES for bookings
-  const [bookings, setBookings] = useState([]);
-  const [loadingBookings, setLoadingBookings] = useState(false);
-  const [bookingsError, setBookingsError] = useState(null);
-
   const isHomeRoute = location.pathname === '/' || location.pathname === '/dashboard';
+
   const navItems = [
     { label: 'Home', to: isAuthenticated ? '/dashboard' : '/', scrollToId: null },
     { label: 'Rooms', to: isAuthenticated ? '/dashboard' : '/', scrollToId: 'rooms' },
-    { label: 'Pricing', to: isAuthenticated ? '/dashboard' : '/', scrollToId: 'pricing' },
+    { label: 'My Bookings', to: isAuthenticated ? '/dashboard' : '/', scrollToId: 'bookings' },
+    { label: 'Amenities', to: isAuthenticated ? '/dashboard' : '/', scrollToId: 'pricing' },
     { label: 'About', to: isAuthenticated ? '/dashboard' : '/', scrollToId: 'about' },
   ];
 
@@ -59,32 +54,7 @@ function NavBar() {
     };
   }, [isHomeRoute]);
 
-  // NEW useEffect to fetch bookings when profile modal opens
-  useEffect(() => {
-    if (showProfileModal) {
-      setLoadingBookings(true);
-      setBookingsError(null);
-
-      fetch('/api/bookings', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // adjust if token stored elsewhere
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed to fetch bookings');
-          return res.json();
-        })
-        .then((data) => {
-          setBookings(data || []);
-        })
-        .catch((err) => setBookingsError(err.message))
-        .finally(() => setLoadingBookings(false));
-    }
-  }, [showProfileModal]);
-
   const isScrolledOrNotHome = scrolled || !isHomeRoute;
-
-  // Fixed position: top on mobile, else bottom if scrolled/not home, else top
   const fixedPosition = isMobile ? 'top' : isScrolledOrNotHome ? 'bottom' : 'top';
 
   return (
@@ -133,6 +103,14 @@ function NavBar() {
                       e.preventDefault();
                       const el = document.getElementById(item.scrollToId);
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    } else if (item.scrollToId && location.pathname !== '/dashboard') {
+                      e.preventDefault();
+                      navigate('/dashboard');
+                      // Delay scrolling to ensure DOM is loaded after navigation
+                      setTimeout(() => {
+                        const el = document.getElementById(item.scrollToId);
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }, 200);
                     } else if (item.to && location.pathname !== item.to) {
                       e.preventDefault();
                       navigate(item.to);
@@ -164,12 +142,15 @@ function NavBar() {
                 </span>
               ) : isAuthenticated ? (
                 <>
-                  <FaUserCircle
-                    size={26}
-                    className="me-3"
-                    style={{ cursor: 'pointer', color: isScrolledOrNotHome ? '#007f5f' : 'white' }}
-                    onClick={() => setShowProfileModal(true)}
-                  />
+                  <div
+                    className="d-flex flex-column align-items-end me-3"
+                    style={{ color: isScrolledOrNotHome ? '#007f5f' : 'white', cursor: 'pointer' }}
+                    onClick={() => setShowLogoutModal(true)}
+                    title="Click to logout"
+                  >
+                    <div className="fw-semibold">{user?.name || 'User'}</div>
+                    <small style={{ fontSize: '0.8rem' }}>{user?.email || 'No email'}</small>
+                  </div>
                 </>
               ) : (
                 <>
@@ -219,75 +200,6 @@ function NavBar() {
           </Button>
           <Button variant="danger" onClick={confirmLogout} style={{ minWidth: '100px' }}>
             Logout
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Profile Modal */}
-      <Modal show={showProfileModal} onHide={() => setShowProfileModal(false)} centered dialogClassName="rounded-modal" size="lg">
-        <Modal.Header
-          closeButton
-          style={{
-            backgroundColor: '#007f5f',
-            color: 'white',
-            borderTopLeftRadius: '0.5rem',
-            borderTopRightRadius: '0.5rem',
-            borderBottom: '1px solid #e0e0e0',
-          }}
-        >
-          <Modal.Title className="fw-bold">Your Profile & Booking History</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ fontSize: '1rem', padding: '1.5rem' }}>
-          <p><strong>Name:</strong> {user?.name}</p>
-          <p><strong>Email:</strong> {user?.email}</p>
-
-          <hr />
-
-          {/*
-          <h5>Booking History</h5>
-
-          {loadingBookings && <p>Loading bookings...</p>}
-          {bookingsError && <p className="text-danger">{bookingsError}</p>}
-
-          {!loadingBookings && !bookingsError && bookings.length === 0 && <p>No bookings found.</p>}
-
-          {!loadingBookings && bookings.length > 0 && (
-            <ul>
-              {bookings.map((booking) => (
-                <li key={booking._id}>
-                  <strong>{booking.roomType}</strong> - Check-in: {new Date(booking.checkIn).toLocaleDateString()} - Nights: {booking.nights}
-                </li>
-              ))}
-            </ul>
-          )}
-          */}
-
-          <div className="d-grid gap-2 mt-4">
-            {/*
-            <Button
-              variant="outline-success"
-              onClick={() => {
-                setShowProfileModal(false);
-                navigate('/change-password');
-              }}
-            >
-              Change Password
-            </Button>
-            */}
-            <Button
-              variant="danger"
-              onClick={() => {
-                setShowProfileModal(false);
-                setShowLogoutModal(true);
-              }}
-            >
-              Logout
-            </Button>
-          </div>
-        </Modal.Body>
-        <Modal.Footer style={{ borderTop: '1px solid #e0e0e0', justifyContent: 'center' }}>
-          <Button variant="secondary" onClick={() => setShowProfileModal(false)}>
-            Close
           </Button>
         </Modal.Footer>
       </Modal>

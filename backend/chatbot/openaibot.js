@@ -9,50 +9,59 @@ const openai = new OpenAI({
 
 export async function askBot(message, tools) {
   const systemPrompt = `
-You are a helpful hotel assistant for Azure Urban Staycation by Briahna.
+You are AzureHUB's friendly hotel assistant, here to help our valued guests.
 
-- Always assist logged-in users: ${tools.name} (${tools.email})
-- Help users book, update, cancel, or check availability for reservations using the provided tools.
-- Supported room types: One Bedroom (2–4 pax) and Two Bedroom (with pool view & balcony).
+- You are always assisting logged-in users: ${tools.name} (${tools.email})
+- Your main job is to help with booking, updating, canceling, or checking room availability.
+- Available rooms: One Bedroom (fits 2–4 people) and Two Bedroom (with pool view & balcony).
 
-🏨 General Info:
-- Address: Azure Urban Residences, Brgy Marcelo Green, Parañaque, Metro Manila
-- Contact: +639162860796 | ahubcaps1111@gmail.com
-- Check-in: 2:00 PM | Check-out: 12:00 PM
+Here’s some important info to keep in mind:
+
+🏨 Location & Contact:
+Azure Urban Residences, Brgy Marcelo Green, Parañaque, Metro Manila  
+Phone: +639162860796 | Email: ahubcaps1111@gmail.com
+
+⏰ Check-in & Check-out:
+Check-in: 2:00 PM  
+Check-out: 12:00 PM
 
 📅 Cancellation Policy:
-- Cancel ≥ 48h before check-in: ✅ Fully refundable
-- Cancel < 48h before: ❌ Charged one night
+- Cancel at least 48 hours before check-in and get a full refund.  
+- Cancel less than 48 hours before check-in and you’ll be charged for one night.
 
 🛏️ Room Amenities:
-- Aircon, Queen bed, sofa, WiFi, Smart TV (Netflix/Youtube)
-- Kitchen: Cookware, stove (light use), microwave, kettle, rice cooker, fridge
-- Extras: Guest kit, towels, water heater, karaoke, board/party games
+- Aircon, queen bed, comfy sofa, WiFi, Smart TV with Netflix & YouTube  
+- Kitchen: cookware, stove (light use), microwave, kettle, rice cooker, fridge  
+- Extras: guest kit, towels, water heater, karaoke machine, board & party games
 
-🏝️ Facilities:
-- Beach, wave pool, kiddie playground, sand bar (till 11PM), sky garden (7AM–10PM)
-- Pool hours: 7AM–12PM, 2PM–7PM | Entrance ₱150
-- Laundry (paid), 7/11, food stalls, BDO ATMs
+🏝️ Facilities & Nearby Attractions:
+- Beach, wave pool, kiddie playground, sand bar (open till 11PM), sky garden (7AM–10PM)  
+- Pool hours: 7AM–12PM and 2PM–7PM (entrance ₱150)  
+- Laundry (paid), 7/11 convenience store, food stalls, BDO ATMs  
+- Parking fee: ₱300/day  
+- Non-smoking policy with ₱2,000 penalty  
+- Sorry, no pets allowed
 
-🚗 Parking: ₱300/day | 🚭 Non-smoking: ₱2,000 penalty | 🐾 No pets allowed
+Nearby spots:  
+- SM Bicutan (5 min walk)  
+- NAIA Airport (20 min drive)  
+- Taxis available right outside the building
 
-📍 Attractions:
-- SM Bicutan (5 min walk)
-- NAIA Airport (20 min drive)
-- Taxis available outside
+🚨 In case of emergency, fire exits are behind the doors—please use the nearest stairwell.
 
-🚨 Emergencies: Fire exit maps behind doors, use nearest stairwell.
+Feel free to assist with any booking or room-related questions!
+
 `;
 
   const functions = [
     {
       name: "reserve",
-      description: "Book a room for a user",
+      description: "Help the user book a room",
       parameters: {
         type: "object",
         properties: {
-          roomType: { type: "string", enum: ["Single", "Double", "Suite"] },
-          checkInRaw: { type: "string", description: "e.g. 'next Friday'" },
+          roomType: { type: "string", enum: ["One Bedroom", "Two Bedroom"] },
+          checkInRaw: { type: "string", description: "Example: 'next Friday'" },
           nights: { type: "integer", minimum: 1 },
         },
         required: ["roomType", "checkInRaw", "nights"],
@@ -60,20 +69,20 @@ You are a helpful hotel assistant for Azure Urban Staycation by Briahna.
     },
     {
       name: "updateReservation",
-      description: "Update an existing reservation",
+      description: "Modify an existing reservation",
       parameters: {
         type: "object",
         properties: {
           bookingId: { type: "string" },
           checkIn: { type: "string", description: "New check-in date" },
-          nights: { type: "integer", description: "New number of nights" },
+          nights: { type: "integer", description: "Number of nights to stay" },
         },
         required: ["bookingId"],
       },
     },
     {
       name: "cancelReservation",
-      description: "Cancel a reservation by ID",
+      description: "Cancel a booking by its ID",
       parameters: {
         type: "object",
         properties: {
@@ -84,12 +93,12 @@ You are a helpful hotel assistant for Azure Urban Staycation by Briahna.
     },
     {
       name: "checkAvailability",
-      description: "Check if a room is available for the given date",
+      description: "Check if a room is free for the requested dates",
       parameters: {
         type: "object",
         properties: {
-          roomType: { type: "string", enum: ["Single", "Double", "Suite"] },
-          checkInRaw: { type: "string", description: "e.g. 'next Saturday'" },
+          roomType: { type: "string", enum: ["One Bedroom", "Two Bedroom"] },
+          checkInRaw: { type: "string", description: "Example: 'next Saturday'" },
           nights: { type: "integer", minimum: 1 },
         },
         required: ["roomType", "checkInRaw", "nights"],
@@ -116,7 +125,7 @@ You are a helpful hotel assistant for Azure Urban Staycation by Briahna.
     if (typeof tools[name] === "function") {
       return await tools[name](...Object.values(args));
     } else {
-      return `❌ Unknown function: ${name}`;
+      return `❌ Sorry, I don’t know how to do that yet.`;
     }
   }
 

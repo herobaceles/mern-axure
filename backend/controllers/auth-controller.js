@@ -18,12 +18,10 @@ import {
 // ----------------------------- SIGNUP -----------------------------
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
-
   try {
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
     const userAlreadyExists = await User.findOne({ email });
     if (userAlreadyExists) {
       return res.status(400).json({ message: "User already exists" });
@@ -31,34 +29,30 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = generateVerificationToken();
-
     const user = new User({
       name,
       email,
       password: hashedPassword,
-      role: "user",
-      verificationToken,
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000 // 24h
+      verificationToken: verificationToken,
+      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
     });
 
     await user.save();
+
     generateJWTToken(res, user._id);
 
-    // ✅ Send response first
+    await sendVerificationEmail(user.email, verificationToken);
+
     res.status(201).json({
       success: true,
-      message: "User created. Verification email sent.",
-      user: { ...user._doc, password: undefined }
+      message: "User created successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
     });
-
-    // ✅ Send email after response (no await to avoid blocking)
-    sendVerificationEmail(user.email, verificationToken)
-      .then(() => console.log("Verification email sent"))
-      .catch((err) => console.error("Failed to send verification email:", err));
-
   } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
