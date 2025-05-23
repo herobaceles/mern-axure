@@ -25,10 +25,9 @@ Phone: +639162860796 | Email: ahubcaps1111@gmail.com
 Check-in: 2:00 PM  
 Check-out: 12:00 PM
 
-📅 Cancellation Policy:
-- Cancel at least 48 hours before check-in and get a full refund.  
-- Cancel less than 48 hours before check-in and you’ll be charged for one night.
-
+prices or rates:
+one bedroom : 2500
+two bedroom: 3500 
 🛏️ Room Amenities:
 - Aircon, queen bed, comfy sofa, WiFi, Smart TV with Netflix & YouTube  
 - Kitchen: cookware, stove (light use), microwave, kettle, rice cooker, fridge  

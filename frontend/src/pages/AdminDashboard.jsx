@@ -13,6 +13,13 @@ const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState(null);
 
+  const [modal, setModal] = useState({
+    show: false,
+    type: null,
+    userId: null,
+    message: "",
+  });
+
   const fetchData = async () => {
     try {
       const [usersRes, bookingsRes] = await Promise.all([
@@ -38,38 +45,64 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = async () => {
-    if (!window.confirm("Are you sure you want to log out?")) return;
-    try {
-      await logout();
-      navigate("/login", { replace: true });
-    } catch (err) {
-      console.error("Logout failed:", err);
-      alert("Logout failed. Please try again.");
-    }
+  const confirmLogout = () => {
+    setModal({
+      show: true,
+      type: "logout",
+      message: "Are you sure you want to log out?",
+    });
   };
 
-  // New: Delete user function
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+  const confirmDeleteUser = (userId) => {
+    setModal({
+      show: true,
+      type: "delete",
+      userId,
+      message: "Are you sure you want to delete this user?",
+    });
+  };
 
-    try {
-      const response = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Failed to delete user");
+  const handleConfirmedAction = async () => {
+    if (modal.type === "logout") {
+      try {
+        await logout();
+        navigate("/login", { replace: true });
+      } catch (err) {
+        console.error("Logout failed:", err);
+        setModal({
+          show: true,
+          type: "alert",
+          message: "Logout failed. Please try again.",
+        });
+        return;
       }
-
-      // Update UI by removing deleted user from state
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-    } catch (err) {
-      console.error("Delete user error:", err);
-      alert(err.message || "Failed to delete user");
     }
+
+    if (modal.type === "delete" && modal.userId) {
+      try {
+        const response = await fetch(`http://localhost:3000/api/admin/users/${modal.userId}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.message || "Failed to delete user");
+        }
+
+        setUsers((prevUsers) => prevUsers.filter((u) => u._id !== modal.userId));
+      } catch (err) {
+        console.error("Delete user error:", err);
+        setModal({
+          show: true,
+          type: "alert",
+          message: err.message || "Failed to delete user",
+        });
+        return;
+      }
+    }
+
+    setModal({ show: false, type: null, userId: null, message: "" });
   };
 
   useEffect(() => {
@@ -99,7 +132,7 @@ const AdminDashboard = () => {
             <span className="nav-link text-white">Dashboard</span>
           </li>
           <li className="nav-item mt-4">
-            <button className="btn btn-outline-light w-100" onClick={handleLogout}>
+            <button className="btn btn-outline-light w-100" onClick={confirmLogout}>
               Logout
             </button>
           </li>
@@ -134,7 +167,7 @@ const AdminDashboard = () => {
                         <th>Email</th>
                         <th>Name</th>
                         <th>Role</th>
-                        <th>Actions</th> {/* New column */}
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -147,8 +180,8 @@ const AdminDashboard = () => {
                           <td>
                             <button
                               className="btn btn-danger btn-sm"
-                              onClick={() => handleDeleteUser(u._id)}
-                              disabled={u._id === user?._id} // Disable deleting own account
+                              onClick={() => confirmDeleteUser(u._id)}
+                              disabled={u._id === user?._id}
                               title={
                                 u._id === user?._id
                                   ? "You cannot delete your own account"
@@ -205,6 +238,54 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {modal.show && (
+        <>
+          <div className="modal show fade d-block" tabIndex="-1">
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    {modal.type === "alert" ? "Alert" : "Confirmation"}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() =>
+                      setModal({ show: false, type: null, userId: null, message: "" })
+                    }
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <p>{modal.message}</p>
+                </div>
+                <div className="modal-footer">
+                  {modal.type !== "alert" && (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() =>
+                        setModal({ show: false, type: null, userId: null, message: "" })
+                      }
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className={`btn btn-${modal.type === "alert" ? "primary" : "danger"}`}
+                    onClick={handleConfirmedAction}
+                  >
+                    {modal.type === "alert" ? "OK" : "Yes"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show"></div>
+        </>
+      )}
     </div>
   );
 };

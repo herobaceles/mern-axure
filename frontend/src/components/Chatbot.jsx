@@ -154,8 +154,9 @@ const Chatbot = () => {
               boxShadow: "0 2px 6px rgba(102, 187, 106, 0.6)",
             }}
           >
-            AzureHub Staycation Assistant 🌴
+             Ms. Ella 
           </div>
+
 
           {/* Messages */}
           <div
