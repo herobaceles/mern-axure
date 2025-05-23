@@ -9,7 +9,7 @@ An AI-powered online reservation system offering real-time availability updates 
 
 ## Screenshots
 
-![App Screenshot]([https://via.placeholder.com/468x300?text=App+Screenshot+Here](https://github.com/herobaceles/mern-axure/blob/82439f52b587bbb15da9ff9255ac800ce32a65b3/screenshots/Screenshot%202025-05-23%20122323.png))
+![App Screenshot]([https://github.com/herobaceles/mern-axure/blob/82439f52b587bbb15da9ff9255ac800ce32a65b3/screenshots/Screenshot%202025-05-23%20122323.png])
 
 
 ## Run Locally
