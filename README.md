@@ -9,7 +9,7 @@ An AI-powered online reservation system offering real-time availability updates 
 
 ## Screenshots
 
-![App Screenshot](/screenshots/Screenshot 2025-05-23 122323.png)
+![App Screenshot](./screenshots/1.png)
 
 
 ## Run Locally
