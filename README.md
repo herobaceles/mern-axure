@@ -1,5 +1,5 @@
 
-# AI Powered Online Reservation System with Real Time Availability and Payment Integreation using MERN-STACK
+# AI Powered Online Reservation System with Real Time Availability and Payment Integreation using MERN-STACK, Paypal, OpenAI
 
 An AI-powered online reservation system offering real-time availability updates and secure payment integration. Designed to streamline bookings, enhance user experience, and automate reservation management for modern businesses.
 
