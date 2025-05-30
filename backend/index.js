@@ -33,7 +33,7 @@ app.get("/api/availability", (req, res) => {
   res.json({ availableRooms: ["Single", "Double", "Suite"] });
 });
 
-// ✅ AI chatbot endpoint with PayPal payment integration
+//  AI chatbot endpoint with PayPal payment integration
 app.post("/api/ask", verifyToken, async (req, res) => {
   const userInput = req.body.message;
 
@@ -41,7 +41,7 @@ app.post("/api/ask", verifyToken, async (req, res) => {
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // ✅ Check for payment confirmation messages first
+    //  Check for payment confirmation messages first
     const userIdStr = user._id.toString();
     if (confirmationMessages.has(userIdStr)) {
       const messages = confirmationMessages.get(userIdStr);
@@ -69,8 +69,8 @@ app.post("/api/ask", verifyToken, async (req, res) => {
           // Store booking details including name and email for later capture
           pendingBookings.set(order.id, {
             userId: user._id,
-            name: user.name,       // <-- Added name
-            email: user.email,     // <-- Added email
+            name: user.name,      
+            email: user.email,    
             roomType,
             checkIn,
             checkOut,
@@ -150,7 +150,7 @@ app.get('/api/bookings', verifyToken, async (req, res) => {
 });
 
 
-// ✅ PayPal success route
+// PayPal success route
 app.get("/paypal/success", async (req, res) => {
   const { token: orderId } = req.query;
 
@@ -168,8 +168,8 @@ app.get("/paypal/success", async (req, res) => {
 
     const newBooking = new Booking({
       userId: bookingData.userId,
-      name: bookingData.name,       // <-- Added name
-      email: bookingData.email,     // <-- Added email
+      name: bookingData.name,       
+      email: bookingData.email,    
       roomType: bookingData.roomType,
       checkIn: bookingData.checkIn,
       checkOut: bookingData.checkOut,
@@ -180,7 +180,7 @@ app.get("/paypal/success", async (req, res) => {
     await newBooking.save();
     pendingBookings.delete(orderId);
 
-    // ✅ Store chatbot confirmation message
+    // Store chatbot confirmation message
     const userIdStr = bookingData.userId.toString();
     if (!confirmationMessages.has(userIdStr)) {
       confirmationMessages.set(userIdStr, []);

@@ -29,7 +29,7 @@ export default function LoginPage() {
     }
   };
 
-  const greenColor = '#28a745'; // Replace with your brand color if needed
+  const greenColor = '#28a745'; 
 
   return (
     <div className="d-flex align-items-center justify-content-center bg-light" style={{ height: '100vh' }}>

@@ -12,7 +12,7 @@ function ChangePassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Call your backend API here
+    
       const res = await fetch('/api/users/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

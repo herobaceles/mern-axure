@@ -2,7 +2,7 @@
 
 import React from 'react';
 import trialimg from '../assets/trial10.jpg';
-import NavBar from './Navbar'; // import NavBar component
+import NavBar from './Navbar'; 
 
 const HeroSection = () => {
   return (
@@ -21,7 +21,7 @@ const HeroSection = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Overlay */}
+       
         <div
           className="position-absolute top-0 start-0 w-100 h-100"
           style={{
@@ -30,10 +30,6 @@ const HeroSection = () => {
           }}
         ></div>
 
-        {/* NavBar Component */}
-        
-
-        {/* Hero Text Content */}
         <div
           className="position-relative d-flex flex-column justify-content-center align-items-start h-100 px-5"
           style={{ zIndex: 2, maxWidth: '600px' }}

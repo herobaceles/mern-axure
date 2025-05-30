@@ -9,9 +9,9 @@ const Footer = () => {
       style={{
         backgroundColor: '#222',
         color: '#eee',
-        padding: '20px 0',  // reduced padding from 40px to 20px
+        padding: '20px 0',  
         marginTop: 'auto',
-        fontSize: '0.9rem', // slightly smaller font for compactness
+        fontSize: '0.9rem',
       }}
     >
       <Container>
